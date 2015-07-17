@@ -50,6 +50,7 @@ class ControllerModuleCrTranslateMate extends Controller{
         // add the names of the available languages
         $data['languages'] = $this->model()->langs();
 
+        // handle ajax requests
 		if (isset($this->request->request['action']) && $this->request->request['action']) {
             switch ($this->request->request['action']) {
                 case 'load': // Retrieve translation texts
@@ -62,6 +63,8 @@ class ControllerModuleCrTranslateMate extends Controller{
                     return;
             }
         }
+
+        $this->document->setTitle(h($this->language->get('heading_title')));
 
         $data['modName'] = $this->modName;
 
@@ -88,20 +91,11 @@ class ControllerModuleCrTranslateMate extends Controller{
         $data['interface'] = isset($_GET['interface']) && $_GET['interface'] == 'admin' ? 'admin' : 'catalog';
         $data['fileSelect'] = $this->model()->fileHTMLSelect($data['interface']);
 
-        //$data['texts'] = $this->model()->loadTexts(); // later do this through ajax
-
-        //$data['filesMenu'] = $this->model()->filesMenu(h($data['text_main_lang_file']));
-
         // set the from's "action" element to send information back to this controller
         $data['action'] = $this->url->link('module/'.$this->modName, 'token=' . $this->session->data['token'].'&action=', 'SSL');
 
         // set the URL for the "Cancel button" to return user to the modules page
-        $data['cancel'] = $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL');      
-
-        // set the default value for the status element
-        // $data[$this->modName.'_status'] = isset($this->request->post[$this->modName.'_status']) ? 
-        //     (int)!empty($this->request->post[$this->modName.'_status']) : // set to 0 or 1 based on the POST input
-        //     $this->model()->status(); // or set to 0 or 1 based on the setting saved in the DB
+        $data['cancel'] = $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'); 
 
         // add javascript
         $this->document->addScript('view/javascript/'.$this->modName.'/jquery.stickytableheaders.min.js');
@@ -133,16 +127,14 @@ class ControllerModuleCrTranslateMate extends Controller{
     protected function setErrorHandler($ajax=false){
 
     	set_error_handler(function($errno, $errstr, $errfile, $errline, $ajax) {
+    		if ( $ajax && !headers_sent() ) { header('HTTP/1.1 500 Internal Server Error'); } // set a 500 status if ajax
     		error_handler($errno, $errstr, $errfile, $errline); // call Opencart's default error handler
-    		if ( $ajax ) { // but set a 500 status and kill the process if ajax
-    			header('HTTP/1.1 500 Internal Server Error');
-    			die();
-    		}
+    		if ( $ajax ) { die(); } // kill the process if ajax
 		});
 
-    	if ( $ajax ) { ini_set('display_errors',1); } // we want to ensure errors appear for admin ajax modules
+    	if ( $ajax ) { ini_set('display_errors',1); } // we want to ensure errors appear for admin ajax requests (to help find problems)
 
-		register_shutdown_function(function($ajax) { // MAKE THIS INTO ANOTHER EXTENSION LATER
+		register_shutdown_function(function($ajax) {
 	        if(is_null($e = error_get_last()) === false) { 
         		switch ($e['type']) {
         			case E_PARSE :
@@ -156,10 +148,11 @@ class ControllerModuleCrTranslateMate extends Controller{
         				break;
         		}
         		$msg .= $e['message'].' in '.$e['file'].' on line '.$e['line'];
-                if ( $ajax ) { // set a 500 status for these errors as well
+                if ( $ajax && !headers_sent() ) { // set a 500 status for these errors as well
                 	header('HTTP/1.1 500 Internal Server Error');
                 }
-            	$this->log->write($msg); // save to Opencart's log (since it doesn't do this natively for some reason...)
+                global $log;
+            	$log->write($msg); // save to Opencart's log (since it doesn't do this natively for some reason...)
                 die();
 	        } 
 		}, $ajax);
@@ -205,7 +198,7 @@ class ControllerModuleCrTranslateMate extends Controller{
     // I shy away from adding HTML in controllers, but for these ajax responses
     // I've made an exception due to ease, convenience, and because I'm lazy
     protected function returnAjaxErrors($errors) {
-    	header('HTTP/1.1 500 Internal Server Error');
+    	if ( !headers_sent() ) { header('HTTP/1.1 500 Internal Server Error'); }
     	if( !is_array($errors) ) { ?>
     		<div class="alert alert-danger" role="alert"><?php print_r($errors); ?></div>
     	<?php }

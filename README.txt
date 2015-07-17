@@ -65,9 +65,10 @@ If you can't figure it out or you're sure it's a problem with my extension, plea
 INSTALLATION INSTRUCTIONS:
 -------------------------------
 
-1. If you've renamed your "admin" folder, rename the "admin" folder in this package's "upload" directory to match it
-2. Copy the files in the "upload" folder into your Opencart directory
-3. In the Opencart admin interface, find "Translate Mate" on the Modules page and activate it
+1. Back up your admin/language and catalog/language folders in your Opencart directory. (optional but always a good idea)
+2. If you've renamed your "admin" folder, rename the "admin" folder in this package's "upload" directory to match it
+3. Copy the files in the "upload" folder into your Opencart directory
+4. In the Opencart admin interface, find "Translate Mate" on the Modules page and activate it
 
 
 -------------------------------
