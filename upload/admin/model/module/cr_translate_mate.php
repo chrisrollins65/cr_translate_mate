@@ -42,7 +42,7 @@ class ModelModuleCrTranslateMate extends Model {
 
         $_ = array();
         if ( file_exists($filepath) ) { include($filepath); } // this should fill $_ with the strings for this file
-        $_[$input['key']] = html_entity_decode($input['translation'], ENT_COMPAT | ENT_HTML401, 'UTF-8');
+        $_[$input['key']] = html_entity_decode($input['translation'], ENT_COMPAT, 'UTF-8');
 
         // create the file content with the updated array of translation strings
         // NOTE - this removes any comments in the file, but I've never really found the comments very helpful anyway
@@ -268,84 +268,9 @@ class ModelModuleCrTranslateMate extends Model {
         return $menu;
     }
 
-    // combines the main language file for each language (english.php, spanish.php, etc)
-    // though these files have different names, their array keys are the same,
-    // so we'll give them the common name "main_language_file"
-    // protected function combineMainLangFiles(array &$filesArray) {
-    //     foreach ( $filesArray as $mainKey=>$f ) {
-    //         foreach ( $f as $fkey => $subf ) {
-    //             if ( !is_array($subf) ) {
-    //                 $filesArray[$mainKey][$this->mainLangFileStr] = 'main_language_file';
-    //                 unset($filesArray[$mainKey][$fkey]);
-    //             }
-    //         }
-    //     }
-    // }
-
     // gets the name of the admin folder (useful if it has been renamed)
     public function adminPath(){
         return $this->adminPath;
     }
-
-    // public function htmlPrep($data) {
-    //     if ( !is_array($data) ) {
-    //         return htmlentities($data, ENT_NOQUOTES, 'UTF-8');
-    //     }
-    //     foreach ( $data as $key=>$d ) {
-    //         if ( is_array($d) ) {
-    //             $data[$key] = $this->htmlPrep($d);
-    //         }
-    //         else {
-    //             $data[$key] = htmlentities($d, ENT_NOQUOTES, 'UTF-8');
-    //         }
-    //     }
-
-    //     return $data;
-    // }
-
- //    protected function moveXML($enable=true) {
- //    	$xmlDir = $this->getXMLDir(); 
- //    	$disabledDir = $xmlDir.'disabled/';
- //    	$xmlFile = $this->modName.'.xml';
-
- //    	if ( !is_dir($disabledDir) ) {
-	// 	    mkdir($disabledDir);
-	// 	}
-
-	// 	$renamed = false;
-	// 	if ( $enable ) {
-	// 		if ( file_exists($disabledDir.$xmlFile) ) {
-	//     		$renamed = rename($disabledDir.$xmlFile, $xmlDir.$xmlFile);
-	//     	}
- //    	}
- //    	else {
-	//     	if ( file_exists($xmlDir.$xmlFile) ) {
-	//     		$renamed = rename($xmlDir.$xmlFile, $disabledDir.$xmlFile);
-	//     	}
- //    	}
- //    	return $renamed && $this->clearCache();
- //    }
-
- //    protected function getXMLDir() {
- //    	return DIR_APPLICATION.'../vqmod/xml/';
- //    }
-
- //    protected function clearCache() {
- //    	$link = $this->url->link('extension/modification/refresh', 'token=' . $this->session->data['token'] . $url, 'SSL');
-    	
- //    	// No easy model method to call to refresh the modifications cache, so we'll curl the URL that does it
- //    	if ( function_exists('curl_init') ) {
-	//         $ch = curl_init();
-	//         curl_setopt($ch, CURLOPT_URL, $link);
-	// 		curl_exec($ch);
-	//         curl_close($ch);
-	//         return true;
- //        }
- //        else if ( ini_get('allow_url_fopen') ) { // if curl not enabled, try with file_get_contents
- //        	return !empty(file_get_contents($link));
- //        }
-
- //        return false;
-	// }
 
 }
