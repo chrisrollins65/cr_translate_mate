@@ -35,7 +35,7 @@
     
 
     <div id="helpDiv" class="alert alert-info">
-      <p><?php echo sprintf($text_help_errors, 'https://github', 'http://opencart'); ?></p>
+      <p><?php echo sprintf($text_help_errors, 'https://github.com/chrisrollins65/cr_translate_mate', 'http://www.opencart.com/index.php?route=extension/extension/info&extension_id=23098'); ?></p>
       <p><?php echo $text_help_hotkeys; ?></p>
       <p><?php echo $text_help_caution; ?></p>
     </div>

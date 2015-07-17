@@ -10,6 +10,7 @@ Design based on the Magic Translations extension: http://www.opencart.com/index.
 
 Since that extension appears to be no longer maintained, I created this one for Opencart 2 users. The code is different, but the functionality is very similar, so those of you familiar with the Magic Translations extension should have no problem getting into this one.
 
+
 -------------------------------
 IMPORTANT NOTES:
 -------------------------------
@@ -23,11 +24,14 @@ I've tried to minimize the risk as much as I can in this module, but it's really
 
 **SPECIAL CHARACTERS**
 
-The module can't really know when text is meant for HTML output vs use in code, emails, etc, so when you save a translation, special characters are NOT converted into their HTML equivalents. So a text such as "A&ntilde;adir transacci&oacute;n" will be saved as "Añadir transacción"
+The module can't really know when text is meant for HTML output vs use in code, emails, etc, so when you save a translation, special characters are NOT converted into their HTML equivalents. So a text such as "A&ntilde;adir transacci&oacute;n" will be saved as "Añadir transacción".
+
+Fortunately, most modern browsers correctly display these characters even if they're not html encoded.
 
 **ENGLISH**
 
 Since English translations come preinstalled with Opencart, be aware that if you edit them, any future update to Opencart could overwrite your changes.
+
 
 -------------------------------
 ERRORS:
@@ -50,8 +54,11 @@ I never recommend setting permissions to 777. I'd try 750 first, and if that's n
 **OTHER ERRORS**
 
 If you can't figure it out or you're sure it's a problem with my extension, please let me know at:
-1. Github:  (I'll probably be more active here, so I prefer this method of contact)
-2. The Opencart Extensions page: (link to come)
+
+1. Github: https://github.com/chrisrollins65/cr_translate_mate
+   (I'll probably be more active here, so I prefer this method of contact)
+
+2. The Opencart Extensions page: http://www.opencart.com/index.php?route=extension/extension/info&extension_id=23098
 
 
 -------------------------------
@@ -62,12 +69,14 @@ INSTALLATION INSTRUCTIONS:
 2. Copy the files in the "upload" folder into your Opencart directory
 3. In the Opencart admin interface, find "Translate Mate" on the Modules page and activate it
 
+
 -------------------------------
 USAGE INSTRUCTIONS:
 -------------------------------
 On the Modules page (in the admin interface of Opencart), select the "Edit" option (the pencil) for the Translate Mate module.
 
 From there, just click on any translation you wish to edit and edit away!
+
 
 -------------------------------
 UNINSTALLATION INSTRUCTIONS:
