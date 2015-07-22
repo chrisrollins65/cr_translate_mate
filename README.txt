@@ -60,6 +60,8 @@ If you can't figure it out or you're sure it's a problem with my extension, plea
 
 2. The Opencart Extensions page: http://www.opencart.com/index.php?route=extension/extension/info&extension_id=23098
 
+3. Email - cr.dev.testing@gmail.com
+
 
 -------------------------------
 INSTALLATION INSTRUCTIONS:

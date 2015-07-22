@@ -52,8 +52,20 @@ class ModelModuleCrTranslateMate extends Model {
         }
         $fileContents .= "?>";
 
-        // if writing to the file fails, return an error. Othewise return true
-        return file_put_contents($filepath, $fileContents) !== FALSE ? array('success' => $_[$input['key']]) :
+        // check that the directory exists first. If not, create it
+        $fileDir = dirname($filepath);
+        $dirExists = is_dir($fileDir);
+        if ( !$dirExists ) {
+            // attempt to get the appropriate directory permissions by looking at neighboring directories
+            $dirPerms = 0777;
+            foreach(array_filter(glob(dirname($fileDir).'/*' , GLOB_ONLYDIR)) as $dir ) {
+                $dirPerms = fileperms($dir);
+            }
+            $dirExists = mkdir($fileDir, $dirPerms, TRUE);
+        }
+        
+        // if writing to the file fails, return an error. Othewise return a success indicator
+        return $dirExists && (file_put_contents($filepath, $fileContents) !== FALSE) ? array('success' => $_[$input['key']]) :
             sprintf($this->language->get('error_write_permission'), $filepath);
     }
 
