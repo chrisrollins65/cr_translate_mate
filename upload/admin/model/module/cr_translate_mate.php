@@ -250,7 +250,7 @@ class ModelModuleCrTranslateMate extends Model {
             return;
         }
         // create a new array for this segment if it doesn't exist
-        if ( !isset($target[$e]) ) {
+        if ( !isset($target[$e]) || !is_array($target[$e]) ) {
             $target[$e] = array();
         }
         // process the rest of the segments recursively
