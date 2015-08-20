@@ -181,7 +181,7 @@ class ModelModuleCrTranslateMate extends Model {
             }
             // filter by text if the option is set
             if ( $opts['textFilter'] !== FALSE ) {
-                $pageStrs = $this->textFilter($pageStrs, $opts['textFilter']);
+                $pageStrs = $this->textFilter($pageStrs, $opts['textFilter'], $page);
             }
 
             if ( $pageStrs ) {
@@ -215,10 +215,14 @@ class ModelModuleCrTranslateMate extends Model {
     }
 
     // filter out any strings that don't match the given filter (very similar to the notTranslated function)
-    protected function textFilter(array $texts, $filter) {
+    protected function textFilter(array $texts, $filter, $page='') {
         foreach ( $texts as $string=>$vals ) {
             $matches = false; // assume that the strings don't match the filter until proven otherwise
             foreach ( $this->langNames() as $lang ) { // check each language
+                if ( isset($vals[$lang]) && !is_string($vals[$lang]) ) {
+                    global $log; // log a value for debugging https://github.com/chrisrollins65/cr_translate_mate/issues/2
+                    $log->write('Translate Mate: searched for ['.$filter.'] and found a non-string on page ['.$page.'] in ['.$string.'->'.$lang.']: '.print_r($vals[$lang], true));
+                }
                 if ( isset($vals[$lang]) && stripos($vals[$lang], $filter) !== FALSE) {
                     $matches = true;
                 }
