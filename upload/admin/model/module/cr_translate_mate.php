@@ -219,13 +219,16 @@ class ModelModuleCrTranslateMate extends Model {
         foreach ( $texts as $string=>$vals ) {
             $matches = false; // assume that the strings don't match the filter until proven otherwise
             foreach ( $this->langNames() as $lang ) { // check each language
-                if ( isset($vals[$lang]) && !is_string($vals[$lang]) ) {
-                    global $log; // log a value for debugging https://github.com/chrisrollins65/cr_translate_mate/issues/2
-                    $log->write('Translate Mate: searched for ['.$filter.'] and found a non-string on page ['.$page.'] in ['.$string.'->'.$lang.']: '.print_r($vals[$lang], true));
+                if ( isset($vals[$lang]) ) {
+                    if ( !is_string($vals[$lang]) ) {
+                        global $log; // log a value for debugging https://github.com/chrisrollins65/cr_translate_mate/issues/2
+                        $log->write('Translate Mate: searched for ['.$filter.'] and found a non-string on page ['.$page.'] in ['.$string.'->'.$lang.']: '.print_r($vals[$lang], true));
+                    }
+                    else if ( stripos($vals[$lang], $filter) !== FALSE) {
+                        $matches = true;
+                    } 
                 }
-                if ( isset($vals[$lang]) && stripos($vals[$lang], $filter) !== FALSE) {
-                    $matches = true;
-                }
+                
             }
             if ( !$matches ) { unset($texts[$string]); } // remove string if it doesn't match the filter
         }
