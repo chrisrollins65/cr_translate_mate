@@ -37,7 +37,7 @@ class ControllerModuleCrTranslateMate extends Controller{
     protected function model() {
         if ( !$this->model ) {
             $this->load->model('module/'.$this->modName);
-            $this->model =  $this->{'model_module_'.$this->modName};
+            $this->model =  $this->{'model_module_'.$this->modName}->getInstance();
         }
 
         return $this->model;
@@ -128,14 +128,23 @@ class ControllerModuleCrTranslateMate extends Controller{
 
     	set_error_handler(function($errno, $errstr, $errfile, $errline, $ajax) {
     		if ( $ajax && !headers_sent() ) { header('HTTP/1.1 500 Internal Server Error'); } // set a 500 status if ajax
-    		error_handler($errno, $errstr, $errfile, $errline); // call Opencart's default error handler
+
+            // call Opencart's default error handler
+            if ( version_compare(VERSION, '2.2.0.0', '<') ) { // If version prior to OpenCart 2.2.0.0
+                error_handler($errno, $errstr, $errfile, $errline);
+            }
+            else {
+                $action = new Action('startup/error/handler');
+                $action->execute($this->registry, array($errno, $errstr, $errfile, $errline));
+            }
+
     		if ( $ajax ) { die(); } // kill the process if ajax
 		});
 
     	if ( $ajax ) { ini_set('display_errors',1); } // we want to ensure errors appear for admin ajax requests (to help find problems)
 
 		register_shutdown_function(function($ajax) {
-	        if(is_null($e = error_get_last()) === false) { 
+	        if(is_null($e = error_get_last()) === false) {
         		switch ($e['type']) {
         			case E_PARSE :
         				$msg = "PARSE ERROR: ";
@@ -151,8 +160,10 @@ class ControllerModuleCrTranslateMate extends Controller{
                 if ( $ajax && !headers_sent() ) { // set a 500 status for these errors as well
                 	header('HTTP/1.1 500 Internal Server Error');
                 }
-                global $log;
-            	$log->write($msg); // save to Opencart's log (since it doesn't do this natively for some reason...)
+
+                // save to Opencart's log (since it doesn't do this natively for some reason...)
+                $this->log->write($msg);
+
                 die();
 	        } 
 		}, $ajax);
@@ -177,8 +188,8 @@ class ControllerModuleCrTranslateMate extends Controller{
         // send html output for the javascript to add to the translation table
         $results = array();
         $results['html'] = $this->load->view('module/'.$this->modName.'_table.tpl', $data);
-        $results['lastFile'] = $this->model()->lastLoadedFile;
-        //echo '<pre>'; print_r($results); echo '</pre>'; die(); die();
+        $results['lastFile'] = $this->model()->getLastLoadedFile();
+
         echo json_encode($results);
     }
 

@@ -1,1 +1,12 @@
+# Developers: in your opencart directory, move all files in your root directory (outside of download)
+# into a temporary directory. Then import this project. This gitignore will only let git include
+# files that pertain to this project
+*
+!cr_translate_mate*
+!*/cr_translate_mate/*
+!*/
+!jquery.stickytableheaders.min.js
+!/LICENSE
+!/README.txt
+!/.gitignore
 /cr_translate_mate.zip

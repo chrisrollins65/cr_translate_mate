@@ -1,8 +1,42 @@
 <?php
 
+/**
+ * Class ModelModuleCrTranslateMate
+ *
+ * Used to retrieve and save translations
+ */
 class ModelModuleCrTranslateMate extends Model {
 
-	protected $modName = 'cr_translate_mate';
+    public function install() {
+        // for the moment, no installation action is needed
+    }
+
+    public function uninstall() {
+        // for the moment, no uninstallation action is needed
+    }
+
+    /**
+     * Get a real instance of this model (as opposed to the proxied version OpenCart creates)
+     *
+     * @return CrTranslateMateModel
+     */
+    public function getInstance()
+    {
+        return new CrTranslateMateModel($this->registry);
+    }
+}
+
+/**
+ * Class CrTranslateMateModel
+ *
+ * OpenCart's proxy system creates a new reflected model object each time a model function is called.
+ * That means data is not preserved in the model from one function to another. To fix this, I've created
+ * a custom model outside the official model class above. The Translate Mate controller will ask for an
+ * instance of this class instead of using OpenCart's proxied version.
+ */
+class CrTranslateMateModel extends model{
+
+    protected $modName = 'cr_translate_mate';
     protected $dirs = array();
     protected $langs = array();
     protected $basePath = ''; // base path of the application
@@ -10,10 +44,10 @@ class ModelModuleCrTranslateMate extends Model {
     protected $catalogPath = ''; // relative path to the catalog folder
     protected $mainLangFileKey = '_main_lang_file';
     protected $mainLangFileStr = ''; // the localized string that will represent the main language file
-    public $lastLoadedFile = ''; // the name of the last loaded file
+    protected $lastLoadedFile = ''; // the name of the last loaded file
 
-
-    public function __construct($registry) {
+    public function __construct($registry)
+    {
         $this->basePath = str_replace('/system', '', DIR_SYSTEM);
         $this->adminPath = str_replace($this->basePath, '', DIR_APPLICATION);
         $this->catalogPath = str_replace($this->basePath, '', DIR_CATALOG);
@@ -24,16 +58,9 @@ class ModelModuleCrTranslateMate extends Model {
         parent::__construct($registry);
     }
 
-	public function install() {
-        // for the moment, no installation action is needed
-    }
-
-    public function uninstall() {
-        // for the moment, no uninstallation action is needed
-    }
-
     // update the language file specified in the input
-    public function saveTranslation($input) {
+    public function saveTranslation($input)
+    {
         $filepath = $this->getFilePath($input['dirKey'], $input['page'], $input['lang']);
         // check that we can write to the file if it exists
         if ( file_exists($filepath) && !is_writable($filepath) ) {
@@ -48,7 +75,7 @@ class ModelModuleCrTranslateMate extends Model {
         // NOTE - this removes any comments in the file, but I've never really found the comments very helpful anyway
         $fileContents = "<?php\n";
         foreach ( $_ as $key=>$value ) {
-            $fileContents .= '$_[\''.$key.'\'] = \''.addcslashes($value, "'\\")."';\n";            
+            $fileContents .= '$_[\''.$key.'\'] = \''.addcslashes($value, "'\\")."';\n";
         }
         $fileContents .= "?>";
 
@@ -63,7 +90,7 @@ class ModelModuleCrTranslateMate extends Model {
             }
             $dirExists = mkdir($fileDir, $dirPerms, TRUE);
         }
-        
+
         // if writing to the file fails, return an error. Othewise return a success indicator
         return $dirExists && (file_put_contents($filepath, $fileContents) !== FALSE) ? array('success' => $_[$input['key']]) :
             sprintf($this->language->get('error_write_permission'), $filepath);
@@ -85,8 +112,16 @@ class ModelModuleCrTranslateMate extends Model {
 
     // extracts the language name from the language arrays
     public function langNames() {
+        // If version prior to OpenCart 2.2.0.0
+        if ( version_compare(VERSION, '2.2.0.0', '<') ) {
+            return !empty($this->langNames) ? $this->langNames :
+                ($this->langNames = array_map(function ($a) {
+                    return $a['directory'];
+                }, $this->langs()));
+        }
+        // Otherwise if OpenCart version 2.2.0.0 or greater:
         return !empty($this->langNames) ? $this->langNames :
-            ($this->langNames = array_map(function($a){ return $a['directory']; }, $this->langs()));
+            ($this->langNames = array_keys($this->langs()));
     }
 
     // list the filenames of all files in the language directories
@@ -146,7 +181,7 @@ class ModelModuleCrTranslateMate extends Model {
         );
         // overwrite defaults with given options
         $opts = array_merge($opts, $options);
-        
+
         $files = $this->listFiles($opts['dirKey']);
         $texts = array();
         $count = 0;
@@ -195,7 +230,7 @@ class ModelModuleCrTranslateMate extends Model {
 
             if ( $opts['singleFile'] ) { break; } // break out of the loop if only loading a single file
         }
-        
+
         return $texts;
     }
 
@@ -221,14 +256,14 @@ class ModelModuleCrTranslateMate extends Model {
             foreach ( $this->langNames() as $lang ) { // check each language
                 if ( isset($vals[$lang]) ) {
                     if ( !is_string($vals[$lang]) ) {
-                        global $log; // log a value for debugging https://github.com/chrisrollins65/cr_translate_mate/issues/2
-                        $log->write('Translate Mate: searched for ['.$filter.'] and found a non-string on page ['.$page.'] in ['.$string.'->'.$lang.']: '.print_r($vals[$lang], true));
+                        // log a value for debugging https://github.com/chrisrollins65/cr_translate_mate/issues/2
+                        $this->log->write('Translate Mate: searched for ['.$filter.'] and found a non-string on page ['.$page.'] in ['.$string.'->'.$lang.']: '.print_r($vals[$lang], true));
                     }
                     else if ( stripos($vals[$lang], $filter) !== FALSE) {
                         $matches = true;
-                    } 
+                    }
                 }
-                
+
             }
             if ( !$matches ) { unset($texts[$string]); } // remove string if it doesn't match the filter
         }
@@ -292,4 +327,8 @@ class ModelModuleCrTranslateMate extends Model {
         return $this->adminPath;
     }
 
+    public function getLastLoadedFile(){
+        return $this->lastLoadedFile;
+    }
+    
 }

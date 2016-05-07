@@ -63,7 +63,7 @@ $(document).ready(function() {
 		if ( lastLoadedFile != '' && append !== undefined) {
 			params.startAfter = lastLoadedFile; // start after the last loaded file
 		}
-		console.log(params);
+
 		$('#translateFormsContainer').fadeTo(500, 0.25);
 		
 		$.get(crtm.url+'load', params)
