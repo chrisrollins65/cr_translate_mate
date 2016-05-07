@@ -7,12 +7,22 @@
  */
 class ModelModuleCrTranslateMate extends Model {
 
-    public function install() {
-        // for the moment, no installation action is needed
+    protected $model; // instance of the model - used to avoid OpenCart's proxy system
+
+    public function __construct($registry)
+    {
+        $this->model = new CrTranslateMateModel($registry);
+        parent::__construct($registry);
     }
 
-    public function uninstall() {
-        // for the moment, no uninstallation action is needed
+    public function install()
+    {
+        $this->model->install();
+    }
+
+    public function uninstall()
+    {
+        $this->model->uninstall();
     }
 
     /**
@@ -22,7 +32,7 @@ class ModelModuleCrTranslateMate extends Model {
      */
     public function getInstance()
     {
-        return new CrTranslateMateModel($this->registry);
+        return $this->model;
     }
 }
 
@@ -56,6 +66,28 @@ class CrTranslateMateModel extends model{
             'catalog' => DIR_CATALOG . 'language/', // catalog language directory
         );
         parent::__construct($registry);
+    }
+
+    public function install()
+    {
+        // Language folder names changed in OpenCart 2.2.0.0, so make sure the language strings for this extension
+        // are in the correct directory and remove the directory that isn't needed.
+        if ( version_compare(VERSION, '2.2.0.0', '<')
+            && file_exists($this->dirs['admin'].'en-gb/module/cr_translate_mate.php') ) {
+            unlink($this->dirs['admin'].'en-gb/module/cr_translate_mate.php');
+            rmdir($this->dirs['admin'].'en-gb/module');
+            rmdir($this->dirs['admin'].'en-gb');
+        }
+        else if ( file_exists($this->dirs['admin'].'english/module/cr_translate_mate.php') ) {
+            unlink($this->dirs['admin'].'english/module/cr_translate_mate.php');
+            rmdir($this->dirs['admin'].'english/module');
+            rmdir($this->dirs['admin'].'english');
+        }
+    }
+
+    public function uninstall()
+    {
+        // for the moment, no uninstallation action is needed
     }
 
     // update the language file specified in the input
@@ -106,8 +138,14 @@ class CrTranslateMateModel extends model{
     public function langs() {
         if ( !empty($this->langs) ) { return $this->langs; }
         $this->load->model('localisation/language');
+        $this->langs = $this->model_localisation_language->getLanguages();
+        // ensure the directory is specified for each language for OpenCart 2.2.0.0 and later
+        if ( version_compare(VERSION, '2.2.0.0', '>=') )
+        foreach ($this->langs as $key=>$value) {
+            $this->langs[$key]['directory'] = $this->langs[$key]['code'];
+        }
 
-        return $this->langs = $this->model_localisation_language->getLanguages();
+        return $this->langs;
     }
 
     // extracts the language name from the language arrays
@@ -330,5 +368,5 @@ class CrTranslateMateModel extends model{
     public function getLastLoadedFile(){
         return $this->lastLoadedFile;
     }
-    
+
 }

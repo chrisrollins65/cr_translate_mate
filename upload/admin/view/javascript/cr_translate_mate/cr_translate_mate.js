@@ -248,7 +248,6 @@ $(document).ready(function() {
     		translation : $textarea.val(),
     		dirKey : $('input[name=interface]:checked').val(), // admin or catalog
     	}
-    	console.log(params);
 
     	$.post(crtm.url+'save', params)
 		.done(function(data){
