@@ -81,8 +81,8 @@ admin/controller/extension/module/cr_translate_mate.php
 admin/language/en-gb/extension/module/cr_translate_mate.php
 admin/model/extension/module/cr_translate_mate.php
 admin/view/javascript/cr_translate_mate
-admin\view\template\extension\module\cr_translate_mate.twig
-admin\view\template\extension\module\cr_translate_mate_table.twig
+admin/view/template/extension/module/cr_translate_mate.twig
+admin/view/template/extension/module/cr_translate_mate_table.twig
 ~~~~
 
 ## DEVELOPERS
