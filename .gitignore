@@ -9,6 +9,7 @@
 !/LICENSE
 !/README.txt
 !/.gitignore
+!/.gitattributes
 /cr_translate_mate.zip
 !/phpunit.xml
 !/README.md
