@@ -75,6 +75,7 @@ From there, just click on any translation you wish to edit and edit away!
 ## UNINSTALLATION INSTRUCTIONS:
 1. On the Modules page, uninstall the module by pressing the red "Uninstall" button.
 2. Delete the following files and folders from your OpenCart directory:
+~~~~
 admin/CrTranslateMate
 admin/controller/extension/module/cr_translate_mate.php
 admin/language/en-gb/extension/module/cr_translate_mate.php
@@ -82,6 +83,7 @@ admin/model/extension/module/cr_translate_mate.php
 admin/view/javascript/cr_translate_mate
 admin\view\template\extension\module\cr_translate_mate.twig
 admin\view\template\extension\module\cr_translate_mate_table.twig
+~~~~
 
 ## DEVELOPERS
 If someone wishes to take over this project, let me know. I just don't have the time to invest much in it anymore.
