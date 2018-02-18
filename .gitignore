@@ -2,7 +2,7 @@
 # into a temporary directory. Then import this project. This gitignore will only let git include
 # files that pertain to this project
 *
-!cr_translate_mate*
+!cr_translat*
 !*/cr_translate_mate/*
 !*/
 !jquery.stickytableheaders.min.js
@@ -10,3 +10,6 @@
 !/README.txt
 !/.gitignore
 /cr_translate_mate.zip
+!/phpunit.xml
+!/README.md
+!/cr_tests/
