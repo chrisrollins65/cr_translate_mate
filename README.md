@@ -6,22 +6,26 @@ A tool to help translate OpenCart into multiple languages.
 
 Inspired by the no-longer-maintained Magic Translations extension
 
+If you're looking for Translate Mate for OpenCart 2, check out this branch: https://github.com/chrisrollins65/cr_translate_mate/tree/OpenCart2 or this release: https://github.com/chrisrollins65/cr_translate_mate/releases/tag/1.0.2
 
 ## IMPORTANT NOTES:
 
 There are a few things to be aware of while using this module.
 
 **CROSS-SITE SCRIPTING VULNERABILITIES (XSS)**
+
 Only allow trusted users to use this module. 
 OpenCart allows html code in translations, so this extension is forced to permit them as well.
 This means malicious users can insert malicious code anywhere translations are used throughout OpenCart.
 
 **SPECIAL CHARACTERS**
+
 This extension does not replace HTML entities in translations.
 Accents and other special characters may not appear correctly in some browsers unless you make sure to convert them where they are used (using htmlentities() or html_special_chars(), for example).
 Fortunately, most modern browsers correctly display these characters even if they're not html encoded.
 
 **Default language**
+
 Be aware that if you edit the translations of the default language OpenCart was installed with, any future update to OpenCart could overwrite your changes.
 
 
@@ -30,16 +34,20 @@ Be aware that if you edit the translations of the default language OpenCart was 
 Errors that occur should be saved to the OpenCart error log (**System > Maintenance > Error Logs**). Be sure to look there if you are experiencing problems. Here's a list of common errors:
 
 **PARSE ERRORS**
+
 These errors usually appear if the PHP code in your language files has syntax errors. Often an unescaped or missing single quote (') is the culprit.
 
 **INVALID TOKEN SESSION**
+
 If you see this, it means you have to re-login to use the module. Try refreshing the page and you should see the login prompt.
 
 **PERMISSION ERRORS**
+
 If you get an error saying that a translation file couldn't be saved, you probably need to fix the permissions of the language directories and files. Contact your webhost (or do a google search) if you need help with that.
 I never recommend setting permissions to 777. I'd try 750 first, and if that's not enough 755, and then 775 if necessary.
 
 **OTHER ERRORS**
+
 If you can't figure it out or you're sure it's a problem with my extension, please let me know at:
 
 1. Github: https://github.com/chrisrollins65/cr_translate_mate
