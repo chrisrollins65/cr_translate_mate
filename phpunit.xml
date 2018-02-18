@@ -1,0 +1,14 @@
+<phpunit bootstrap="upload/admin/CrTranslateMate/autoloader.php"
+         colors="true">
+    <testsuites>
+        <testsuite name="Translate Mate tests">
+            <directory>cr_tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./upload/admin/CrTranslateMate/</directory>
+        </whitelist>
+    </filter>
+</phpunit>

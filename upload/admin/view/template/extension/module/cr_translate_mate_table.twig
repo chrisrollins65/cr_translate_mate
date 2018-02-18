@@ -1,0 +1,23 @@
+<!-- Loaded text rows -->
+{% autoescape %}
+{% for fileName, strings in texts %}
+  {% for key, translationText in strings %}
+    <tr class="textRow" data-page="{{ fileName }}">
+      <td class="pageCol">{{ fileName == '_main_lang_file' ? text_main_lang_file : fileName }}</td>
+      <td class="keyCol">{{ key }}</td>
+      {% for directory in languageDirectories %}
+      <td class="translationCol" data-lang="{{ directory }}">
+        <div class="transDiv">
+          {% if translationText.hasTranslationForLanguage(directory) %}
+            {{- translationText.getTranslation(directory) -}}
+          {% else %}
+            <span class="notTranslatedSpan text-danger">{{ text_not_translated }}</span>
+          {% endif %}
+        </div><!-- /.transDiv -->
+      </td>
+      {% endfor %}{# l in languages #}
+    </tr>
+  {% endfor %}{# key, translations in strings #}
+{% endfor %}{# fileName, strings in texts #}
+{% endautoescape %}
+<!-- End text rows -->

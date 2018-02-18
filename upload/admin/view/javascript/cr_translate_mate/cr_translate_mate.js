@@ -39,7 +39,7 @@ $(document).ready(function() {
 	// if the data begins with "<!DOCTYPE", Opencart's probably showing an error
 	function opencartError(data) {
 		if (data.indexOf("<!DOCTYPE") > -1 ) {
-			errIndex = data.indexOf("<div class=\"alert alert-danger\">")
+			errIndex = data.indexOf("<div class=\"alert alert-danger\">");
 			if ( errIndex > -1 ) {
 				var error = data.substring(errIndex);
 				error = error.substring(0, error.indexOf('</div>')+6);
@@ -54,7 +54,7 @@ $(document).ready(function() {
 	function loadTexts(append) {
 		var params = {
 			length : 20, // minimum number of new texts to load
-			dirKey : $('input[name=interface]:checked').val(), // admin or catalog
+			userInterface : $('input[name=interface]:checked').val(), // admin or catalog
 			notTranslated : $('#notTranslated').is(':checked'), // show only non-translated texts
 			singleFile : $('#pageSearch').val(), // load a single file or all files
 			keyFilter : $('#keySearch').val(), // filter by key
@@ -68,9 +68,7 @@ $(document).ready(function() {
 		
 		$.get(crtm.url+'load', params)
 		.done(function(data){
-			try { // check that the returned data is a valid JSON object
-				data = JSON.parse(data);
-
+			try {
 				// if the results DON'T have an 'html' property that begins with "<!-- Loaded", something's not right
 				if ( !data.hasOwnProperty('html') || data.html.indexOf("<!-- Loaded") === -1 ) {
 					errorModal(crtm.error_unexpected, JSON.stringify(data, null, 2));
@@ -114,8 +112,8 @@ $(document).ready(function() {
 				// no more results if
 				// 1. loading a single file, 
 				// 2. less than the minimum number of parameters were returned
-				// 3. or the last loaded file is an empty string
-				if ( params.singleFile !== '' || numTexts < params['length'] || lastLoadedFile == '' ) {
+				// 3. or the last loaded file is null
+				if ( params.singleFile !== '' || numTexts < params['length'] || lastLoadedFile == null ) {
 					$('#loadMoreBtn').hide();	
 				}
 				else { // otherwise show the "Load more" button
@@ -136,7 +134,7 @@ $(document).ready(function() {
 			// get the text to be translated (or an empty string if not translated)
 			var text = $transDiv.find('.notTranslatedSpan').length ? '' : $transDiv.html();
 			// create and append the new text area
-			$textarea = $('<textarea name="translation" class="transTextArea">'+text+'</textarea>');
+			$textarea = $('<textarea name="translation" class="transTextArea">'+text.trim()+'</textarea>');
 	        $(this).append($textarea);
 	        
 	        $transDiv.hide(); // hide the original text
@@ -181,17 +179,17 @@ $(document).ready(function() {
         });
         
         //get position of textarea
-        var oPos = $textarea.position();
-
-        //control buttons  
+        var oPos = $textarea.offset();
+        //control buttons
+		var $ctrlPreview = $('<a href="#" class="htmlPreview" title="'+crtm.text_html_preview+'"><i class="fa fa-eye">&nbsp;</i></a>');
         var $ctrlOk = $('<a href="#" class="saveTrans" title="'+crtm.text_save_translation+'"><i class="fa fa-check">&nbsp;</i></a>');
         var $ctrlCancel = $('<a href="#" class="cancelTrans" title="'+crtm.text_cancel+'"><i class="fa fa-times">&nbsp;</i></a>');
         
-        $ctrls.append($ctrlOk).append($ctrlCancel);
+        $ctrls.append($ctrlPreview).append($ctrlOk).append($ctrlCancel);
         
         $ctrls.css({
-            'top' : oPos.top -15,
-            'left' : oPos.left + $textarea.outerWidth()+1
+            'top' : oPos.top - 36,
+            'left' : oPos.left + $textarea.outerWidth() - 2
         });
         
         //append new controls to the DOM
@@ -242,12 +240,12 @@ $(document).ready(function() {
 
     function saveTranslation($textarea) {
     	var params = {
-    		page : $textarea.closest('tr').attr('data-page'),
+    		fileName : $textarea.closest('tr').attr('data-page'),
     		key : $textarea.closest('tr').find('.keyCol').text(),
-    		lang : $textarea.closest('td').attr('data-lang'),
+    		language : $textarea.closest('td').attr('data-lang'),
     		translation : $textarea.val(),
-    		dirKey : $('input[name=interface]:checked').val(), // admin or catalog
-    	}
+    		userInterface : $('input[name=interface]:checked').val() // admin or catalog
+    	};
 
     	$.post(crtm.url+'save', params)
 		.done(function(data){
@@ -300,4 +298,10 @@ $(document).ready(function() {
             showCtrls($(this));
         }
     });
+
+	$('body').on('click', '.htmlPreview', function(){
+		iframeContent = $('.transTextArea:first').html().replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+		$('#htmlPreviewSandbox').html('<iframe class="modalSandbox" sandbox srcdoc="' + iframeContent + '" frameborder="0"></iframe>');
+		$('#htmlPreviewModal').modal('show');
+	});
 });

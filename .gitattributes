@@ -1,0 +1,5 @@
+# Files/folders to be excluded from releases
+cr_tests export-ignore
+.gitignore export-ignore
+composer.json export-ignore
+phpunit.xml export-ignore
