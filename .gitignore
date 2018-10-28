@@ -14,4 +14,4 @@
 !/phpunit.xml
 !/README.md
 !/cr_tests/
-!composer.json
+!/composer.json

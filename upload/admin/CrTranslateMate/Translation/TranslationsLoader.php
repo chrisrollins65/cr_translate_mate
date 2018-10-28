@@ -41,8 +41,8 @@ class TranslationsLoader
         $texts = array();
         $numberOfTexts = 0;
         $reachedFileToStartAfter = is_null($options->getFileToStartAfter());
-        while ($numberOfTexts < $options->getNumberOfTexts() && list($fileName, $files) = each($fileList)) {
-
+        while ($numberOfTexts < $options->getNumberOfTexts() && $fileName = key($fileList)) {
+        	next($fileList);
             if (!$this->fileShouldBeLoaded($reachedFileToStartAfter, $options->getSingleFileToLoad(), $fileName)) {
                 $reachedFileToStartAfter = $fileName == $options->getFileToStartAfter();
                 continue;
